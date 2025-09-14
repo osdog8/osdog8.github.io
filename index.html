@@ -36,7 +36,7 @@
         <h3 style="margin:0 0 4px 0;">Gravitational Constant</h3>
         <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
             <h3 style="margin:0">\(G=\)</h3>
-            <input type="number" value="0.000000000066743" style="background-color: rgb(225, 225, 225);" readonly>
+            <input id="gravitationalConst" type="number" value="6.6743e-11" style="background-color: rgb(225, 225, 225);" readonly>
             <h3 style="margin:0">\(N\frac{m^2}{kg^2}\)</h3>
         </div>
 
@@ -45,7 +45,7 @@
         <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
             <h3 style="margin:0">\(m_1=\)</h3>
             <input id="mass1" type="number">
-            <h3 style="margin:0">\(N\)</h3>
+            <h3 style="margin:0">\(kg\)</h3>
         </div>
 
         <!--Mass 2-->
@@ -53,7 +53,15 @@
         <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
             <h3 style="margin:0">\(m_2=\)</h3>
             <input id="mass2" type="number">
-            <h3 style="margin:0">\(N\)</h3>
+            <h3 style="margin:0">\(kg\)</h3>
+        </div>
+
+        <!--Radius-->
+        <h3 style="margin:0 0 4px 0;">Radius</h3>
+        <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
+            <h3 style="margin:0">\(r=\)</h3>
+            <input id="radius" type="number">
+            <h3 style="margin:0">\(m\)</h3>
         </div>
 
         <h3 style="margin:0 0 4px 0;">Solve for:</h3>
@@ -61,17 +69,39 @@
             <option value="gravitationalForce">Gravitational Force</option>
             <option value="mass1">Mass 1</option>
             <option value="mass2">Mass 2</option>
+            <option value="radius">Radius</option>
         </select>
 
         <button id="submitGravForce">Submit</button>
 
         <script>
             const gravForce = document.getElementById("gravitationalForce");
+            const gravConst = document.getElementById("gravitationalConst");
             const mass1 = document.getElementById("mass1");
             const mass2 = document.getElementById("mass2");
-            const solveFor = document.getElementById("solveForGravForce")
-            const submit = document.getElementById("submitGravForce")
+            const radius = document.getElementById("radius");
+            const solveFor = document.getElementById("solveForGravForce");
+            const submit = document.getElementById("submitGravForce");
 
+            submit.addEventListener("click", () => {
+                if (solveFor.value == "gravitationalForce") {
+                    if ((mass1.value != "" && mass2.value != "" && radius.value != "") && (mass1.value > 0 && mass2.value > 0 && radius.value > 0)) {
+                        gravForce.value = gravConst.value * ((mass1.value * mass2.value) / Math.pow(radius.value, 2));
+                    }
+                } else if (solveFor.value == "mass1") {
+                    if ((gravForce.value != "" && mass2.value != "" && radius.value != "") && (gravForce.value > 0 && mass2.value > 0 && radius.value > 0)) {
+                        mass1.value = (gravForce.value * Math.pow(radius.value, 2) / (gravConst.value * mass2.value));
+                    }
+                } else if (solveFor.value == "mass2") {
+                    if ((gravForce.value != "" && mass1.value != "" && radius.value != "") && (gravForce.value > 0 && mass1.value > 0 && radius.value > 0)) {
+                        mass2.value = (gravForce.value * Math.pow(radius.value, 2) / (gravConst.value * mass1.value));
+                    }
+                } else if (solveFor.value == "radius") {
+                    if ((gravForce.value != "" && mass1.value != "" && mass2.value != "") && (gravForce.value > 0 && mass1.value > 0 && mass2.value > 0)) {
+                        radius.value = Math.sqrt((gravConst.value * mass1.value * mass2.value) / gravForce.value);
+                    }
+                }
+            });
         </script>
     </div>
 </body>
