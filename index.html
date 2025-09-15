@@ -13,5 +13,12 @@
     <nav style="margin-bottom: 20px;">
         <a href="index.html">Main Page</a> | <a href="calcs.html">Calculators</a> | <a href="games.html">Games</a>
     </nav>
+    <p id="currentTime"></p>
+
+    <script>
+        const currentTime = document.getElementById("currentTime");
+        currentTime.textContent = new Date().toLocaleString();
+        //new Date().getTime()
+    </script>
 </body>
 </html>
