@@ -15,92 +15,98 @@
         <a href="calcs.html">Calculators</a> |
     </nav>
 
-    <div style="background-color: rgb(235, 235, 235); padding: 10px;">
-        <h2 style="margin-top: 0px;">Gravitational Force Calculator</h2>
-        <h2>\(F_g=G\frac{m_1 m_2}{r^2}\)</h2>
+    <fieldset>
+        <legend><select id="calcSelection">
+            <option>Gravitational Force</option>
+            <option>Resistance</option>
+        </select></legend>
 
-        <!--Gravitational Force-->
-        <h3 style="margin:0 0 4px 0;">Gravitational Force</h3>
-        <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
-            <h3 style="margin:0">\(F_g=\)</h3>
-            <input id="gravitationalForce" type="number">
-            <h3 style="margin:0">\(N\)</h3>
-        </div>
-        
-        <!--Gravitational Constant-->
-        <h3 style="margin:0 0 4px 0;">Gravitational Constant</h3>
-        <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
-            <h3 style="margin:0">\(G=\)</h3>
-            <input id="gravitationalConst" type="number" value="6.6743e-11" style="background-color: rgb(225, 225, 225);" readonly>
-            <h3 style="margin:0">\(N\frac{m^2}{kg^2}\)</h3>
-        </div>
+        <div id="gravForceDiv">
+            <h2>\(F_g=G\frac{m_1 m_2}{r^2}\)</h2>
 
-        <!--Mass 1-->
-        <h3 style="margin:0 0 4px 0;">Mass 1</h3>
-        <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
-            <h3 style="margin:0">\(m_1=\)</h3>
-            <input id="mass1" type="number">
-            <h3 style="margin:0">\(kg\)</h3>
-        </div>
+            <!--Gravitational Force-->
+            <h3 style="margin:0 0 4px 0;">Gravitational Force</h3>
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
+                <h3 style="margin:0">\(F_g=\)</h3>
+                <input id="gravitationalForce" type="number">
+                <h3 style="margin:0">\(N\)</h3>
+            </div>
+            
+            <!--Gravitational Constant-->
+            <h3 style="margin:0 0 4px 0;">Gravitational Constant</h3>
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
+                <h3 style="margin:0">\(G=\)</h3>
+                <input id="gravitationalConst" type="number" value="6.6743e-11" style="background-color: rgb(225, 225, 225);" readonly>
+                <h3 style="margin:0">\(N\frac{m^2}{kg^2}\)</h3>
+            </div>
 
-        <!--Mass 2-->
-        <h3 style="margin:0 0 4px 0;">Mass 2</h3>
-        <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
-            <h3 style="margin:0">\(m_2=\)</h3>
-            <input id="mass2" type="number">
-            <h3 style="margin:0">\(kg\)</h3>
-        </div>
+            <!--Mass 1-->
+            <h3 style="margin:0 0 4px 0;">Mass 1</h3>
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
+                <h3 style="margin:0">\(m_1=\)</h3>
+                <input id="mass1" type="number">
+                <h3 style="margin:0">\(kg\)</h3>
+            </div>
 
-        <!--Radius-->
-        <h3 style="margin:0 0 4px 0;">Radius</h3>
-        <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
-            <h3 style="margin:0">\(r=\)</h3>
-            <input id="radius" type="number">
-            <h3 style="margin:0">\(m\)</h3>
-        </div>
+            <!--Mass 2-->
+            <h3 style="margin:0 0 4px 0;">Mass 2</h3>
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
+                <h3 style="margin:0">\(m_2=\)</h3>
+                <input id="mass2" type="number">
+                <h3 style="margin:0">\(kg\)</h3>
+            </div>
 
-        <!--Solving Dropdown-->
-        <h3 style="margin:0 0 4px 0;">Solve for:</h3>
-        <select id="solveForGravForce">
-            <option value="gravitationalForce">Gravitational Force</option>
-            <option value="mass1">Mass 1</option>
-            <option value="mass2">Mass 2</option>
-            <option value="radius">Radius</option>
-        </select>
+            <!--Radius-->
+            <h3 style="margin:0 0 4px 0;">Radius</h3>
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom: 25px;">
+                <h3 style="margin:0">\(r=\)</h3>
+                <input id="radius" type="number">
+                <h3 style="margin:0">\(m\)</h3>
+            </div>
 
-        <!--Solve Button-->
-        <button id="submitGravForce">Submit</button>
+            <!--Solving Dropdown-->
+            <h3 style="margin:0 0 4px 0;">Solve for:</h3>
+            <select id="solveForGravForce">
+                <option value="gravitationalForce">Gravitational Force</option>
+                <option value="mass1">Mass 1</option>
+                <option value="mass2">Mass 2</option>
+                <option value="radius">Radius</option>
+            </select>
 
-        <!--Solving Script-->
-        <script>
-            const gravForce = document.getElementById("gravitationalForce");
-            const gravConst = document.getElementById("gravitationalConst");
-            const mass1 = document.getElementById("mass1");
-            const mass2 = document.getElementById("mass2");
-            const radius = document.getElementById("radius");
-            const solveFor = document.getElementById("solveForGravForce");
-            const submit = document.getElementById("submitGravForce");
+            <!--Solve Button-->
+            <button id="submitGravForce">Submit</button>
 
-            submit.addEventListener("click", () => {
-                if (solveFor.value == "gravitationalForce") {
-                    if ((mass1.value != "" && mass2.value != "" && radius.value != "") && (mass1.value > 0 && mass2.value > 0 && radius.value > 0)) {
-                        gravForce.value = gravConst.value * ((mass1.value * mass2.value) / Math.pow(radius.value, 2));
+            <!--Solving Script-->
+            <script>
+                const gravForce = document.getElementById("gravitationalForce");
+                const gravConst = document.getElementById("gravitationalConst");
+                const mass1 = document.getElementById("mass1");
+                const mass2 = document.getElementById("mass2");
+                const radius = document.getElementById("radius");
+                const solveFor = document.getElementById("solveForGravForce");
+                const submit = document.getElementById("submitGravForce");
+
+                submit.addEventListener("click", () => {
+                    if (solveFor.value == "gravitationalForce") {
+                        if ((mass1.value != "" && mass2.value != "" && radius.value != "") && (mass1.value > 0 && mass2.value > 0 && radius.value > 0)) {
+                            gravForce.value = gravConst.value * ((mass1.value * mass2.value) / Math.pow(radius.value, 2));
+                        }
+                    } else if (solveFor.value == "mass1") {
+                        if ((gravForce.value != "" && mass2.value != "" && radius.value != "") && (gravForce.value > 0 && mass2.value > 0 && radius.value > 0)) {
+                            mass1.value = (gravForce.value * Math.pow(radius.value, 2) / (gravConst.value * mass2.value));
+                        }
+                    } else if (solveFor.value == "mass2") {
+                        if ((gravForce.value != "" && mass1.value != "" && radius.value != "") && (gravForce.value > 0 && mass1.value > 0 && radius.value > 0)) {
+                            mass2.value = (gravForce.value * Math.pow(radius.value, 2) / (gravConst.value * mass1.value));
+                        }
+                    } else if (solveFor.value == "radius") {
+                        if ((gravForce.value != "" && mass1.value != "" && mass2.value != "") && (gravForce.value > 0 && mass1.value > 0 && mass2.value > 0)) {
+                            radius.value = Math.sqrt((gravConst.value * mass1.value * mass2.value) / gravForce.value);
+                        }
                     }
-                } else if (solveFor.value == "mass1") {
-                    if ((gravForce.value != "" && mass2.value != "" && radius.value != "") && (gravForce.value > 0 && mass2.value > 0 && radius.value > 0)) {
-                        mass1.value = (gravForce.value * Math.pow(radius.value, 2) / (gravConst.value * mass2.value));
-                    }
-                } else if (solveFor.value == "mass2") {
-                    if ((gravForce.value != "" && mass1.value != "" && radius.value != "") && (gravForce.value > 0 && mass1.value > 0 && radius.value > 0)) {
-                        mass2.value = (gravForce.value * Math.pow(radius.value, 2) / (gravConst.value * mass1.value));
-                    }
-                } else if (solveFor.value == "radius") {
-                    if ((gravForce.value != "" && mass1.value != "" && mass2.value != "") && (gravForce.value > 0 && mass1.value > 0 && mass2.value > 0)) {
-                        radius.value = Math.sqrt((gravConst.value * mass1.value * mass2.value) / gravForce.value);
-                    }
-                }
-            });
-        </script>
-    </div>
+                });
+            </script>
+        </div>
+    </fieldset>
 </body>
 </html>
