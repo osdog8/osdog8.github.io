@@ -29,11 +29,19 @@
     <fieldset>
         <legend id="wordleCount">Wordle</legend>
 
-        <p id="word"></p>
+        <p id="gameState" style="text-align: center;">Good luck.</p>
 
-        <div id="boxContainer" style="display: grid; grid-template-columns: repeat(5, 60px); grid-template-rows: repeat(6, 60px); gap: 5px;">
+        <div id="boxContainer" style="display: grid; grid-template-columns: repeat(5, 60px); grid-template-rows: repeat(6, 60px); gap: 5px; margin-bottom: 20px; justify-content: center;"></div>
 
+        <div id="keyboardLayout">
+            <div id="layoutRow1" style="margin-bottom: 5px; align-items: center; justify-content: center; display: flex;"></div>
+            <div id="layoutRow2" style="margin-bottom: 5px; align-items: center; justify-content: center; display: flex;"></div>
+            <div id="layoutRow3" style="margin-bottom: 5px; align-items: center; justify-content: center; display: flex;"></div>
         </div>
+
+        <button id="prevButton" style="margin-right: 10px;">&lt; Prev</button>
+
+        <button id="nextButton">Next &gt;</button>
     </fieldset>
 
     <p id="countdown"></p>
@@ -41,7 +49,8 @@
 
     <!--Game Handler Script-->
     <script>
-        const wordP = document.getElementById("word");
+        //const wordP = document.getElementById("word");
+        const playState = document.getElementById("gameState");
 
         const today = new Date();
         const seed = (today.getUTCFullYear() * 10000) + ((today.getUTCMonth() + 1) * 100) + today.getUTCDate();
@@ -53,6 +62,7 @@
         const rand = seededRandom(seed); //0 <= x < 1 based on the day
         const amount = 1385; //amount of words in text file
         const wordIndex = Math.floor(rand * (amount - 1));
+        var selectedWord;
 
         async function fetchWord() {
             try {
@@ -60,19 +70,15 @@
                 if (!response.ok) throw new Error("HTTP error " + response.status);
 
                 const text = await response.text();
-                const word = text.split("\n").map(w => w.trim())[wordIndex] //turns into list then trims spaces from all words
-                wordP.textContent = word
+                selectedWord = text.split("\n").map(w => w.trim())[wordIndex] //turns into list then trims spaces from all words
+                //wordP.textContent = selectedWord
             } catch (error) {
                 console.error('Error fetching the word list:', error);
-                wordP.textContent = "failed to load word list";
+                //wordP.textContent = "failed to load word list";
             }
         }
 
         fetchWord();
-
-
-
-        
 
         function updateCountdown() {
             const exactlyNow = new Date();
@@ -116,6 +122,34 @@
             box.appendChild(h1);
         }
 
+        const charsAllowed = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "z", "x", "c", "v", "b", "n", "m"];
+
+        var buttons = [];
+        const row1 = document.getElementById("layoutRow1")
+        const row2 = document.getElementById("layoutRow2")
+        const row3 = document.getElementById("layoutRow3")
+
+        function createButton(i, row) {
+            var newButton = document.createElement("button");
+            newButton.style.height = "40px";
+            newButton.style.width = "30px";
+            newButton.textContent = charsAllowed[i].toUpperCase();
+            newButton.style.marginRight = "5px";
+            row.appendChild(newButton);
+
+            buttons.push(newButton);
+        }
+
+        for (let i = 0; i < 10; i++) {
+            createButton(i, row1);
+        }
+        for (let i = 10; i < 19; i++) {
+            createButton(i, row2);
+        }
+        for (let i = 19; i < 26; i++) {
+            createButton(i, row3);
+        }
+
         var validWordList;
         async function isWordValid(wordString) {
             if (validWordList) {
@@ -134,25 +168,47 @@
             }
         }
 
-        const charsAllowed = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
         var wordInput = "";
         var attempt = 0
         window.addEventListener("keydown", async function(event) {
             if (event.key == "Backspace") {
                 if (wordInput.length > 0) {
                     wordInput = wordInput.slice(0, -1)
-                    console.log(wordInput);
-                    console.log(wordInput.length);
                 }
             } else if (event.key == "Enter") {
                 if (wordInput.length == 5) {
-                    const f = await isWordValid(wordInput);
-                    if (f) {
-                        console.log("word found");
+                    const isValid = await isWordValid(wordInput);
+                    if (isValid) {
+                        for (let i = attempt * 5; i < (attempt * 5) + 5; i++) {
+                            const currentLetter = wordInput[i - (attempt * 5)]
+                            const currentLetterCorrectWord = selectedWord[i - (attempt * 5)]
+                            if (currentLetter == currentLetterCorrectWord) {
+                                //if letter is correct (green)
+                                boxContainer.children[i].style.background = "#00cc00";
+                            } else if (selectedWord.includes(currentLetter)) {
+                                //if letter is somewhere in word (yellow)
+                                boxContainer.children[i].style.background = "#cccc00";
+                            }
+                        }
+
+                        //charsAllowed, buttons,  word input
+                        wordInput.split("").forEach((letter, i) => {
+                            const index = charsAllowed.indexOf(letter)
+
+                            if (index != -1) {
+                                if (letter == selectedWord[i]) {
+                                    buttons[index].style.backgroundColor = "#00ff00";
+                                } else if (selectedWord.includes(letter) && buttons[index].style.backgroundColor != "rgb(0, 255, 0)") {
+                                    console.log(buttons[index].style.backgroundColor);
+                                    buttons[index].style.backgroundColor = "#ffff00";
+                                } else if (buttons[index].style.backgroundColor != "rgb(0, 255, 0)" && buttons[index].style.backgroundColor != "rgb(255, 255, 0)") {
+                                    buttons[index].style.backgroundColor = "#aaaaaa";
+                                }
+                            }
+                        });
+
                         wordInput = "";
                         attempt++;
-                        console.log("attemp:");
-                        console.log(attempt);
                     }
                 }
             } else if (charsAllowed.includes(event.key)) {
@@ -160,9 +216,6 @@
                     wordInput += event.key;
                 }
             }
-
-            console.log(wordInput);
-            console.log(wordInput.length);
             
             if (attempt < 6) {
                 for (let i = attempt * 5; i < (attempt * 5) + 5; i++) {
@@ -174,6 +227,10 @@
                         boxContainer.children[i].children[0].textContent = "";
                     }
                 }
+            } else {
+                //if lost the game
+                playState.style.color = "red";
+                playState.textContent = `The word was ${selectedWord}. You trash asf. Better luck next time I guess.`
             }
         });
     </script>
