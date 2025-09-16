@@ -64,6 +64,7 @@
     <script>
         //const wordP = document.getElementById("word");
         const playState = document.getElementById("gameState");
+        var gameState = "playing";
 
         const today = new Date();
         const seed = (today.getUTCFullYear() * 10000) + ((today.getUTCMonth() + 1) * 100) + today.getUTCDate();
@@ -135,6 +136,8 @@
             box.appendChild(h1);
         }
 
+        const handlers = []; //array of events
+
         const charsAllowed = ["enter", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "backspace", "a", "s", "d", "f", "g", "h", "j", "k", "l", "z", "x", "c", "v", "b", "n", "m"];
 
         var buttons = [];
@@ -155,6 +158,10 @@
                 newButton.style.display = "flex";
                 newButton.style.justifyContent = "center";
                 newButton.style.alignItems = "center";
+
+                const handleClick = () => keyPressed("Enter");
+                newButton.addEventListener("click", handleClick);
+                handlers.push(handleClick);
             } else if (charsAllowed[i] == "backspace") {
                 var newImg = document.createElement("img");
                 newImg.src = "backspace.png";
@@ -164,17 +171,21 @@
 
                 newButton.style.display = "flex";
                 newButton.style.justifyContent = "center";
-                ewButton.style.alignItems = "center";
+                newButton.style.alignItems = "center";
+
+                const handleClick = () => keyPressed("Backspace");
+                newButton.addEventListener("click", handleClick);
+                handlers.push(handleClick);
             } else {
                 newButton.textContent = charsAllowed[i].toUpperCase();
+
+                const handleClick = () => keyPressed(charsAllowed[i]);
+                newButton.addEventListener("click", handleClick);
+                handlers.push(handleClick);
             }
+
             row.appendChild(newButton);
-
             buttons.push(newButton);
-
-            newButton.addEventListener("click", () => {
-                console.log(charsAllowed[i]);
-            });
         }
 
         for (let i = 0; i < 12; i++) {
@@ -207,12 +218,15 @@
 
         var wordInput = "";
         var attempt = 0
-        window.addEventListener("keydown", async function (event) {
-            if (event.key == "Backspace") {
+
+        var keyEventHandlers = [];
+
+        async function keyPressed(key) {
+            if (key == "Backspace") {
                 if (wordInput.length > 0) {
                     wordInput = wordInput.slice(0, -1)
                 }
-            } else if (event.key == "Enter") {
+            } else if (key == "Enter") {
                 if (wordInput.length == 5) {
                     const isValid = await isWordValid(wordInput);
                     if (isValid) {
@@ -247,13 +261,28 @@
                             }
                         });
 
+                        if (wordInput == selectedWord) {
+                            gameState = "won";
+                            playState.style.color = "green";
+                            playState.textContent = "You won. Good job. Come back soon for another word.";
+
+                            buttons.forEach((button, i) => {
+                                console.log(i);
+                                button.removeEventListener("click", handlers[i], false);
+                            });
+
+                            keyEventHandlers.forEach((_, i) => {
+                                window.removeEventListener("keydown", keyEventHandlers[i], false);
+                            });
+                        }
+
                         wordInput = "";
                         attempt++;
                     }
                 }
-            } else if (charsAllowed.includes(event.key)) {
+            } else if (charsAllowed.includes(key)) {
                 if (wordInput.length < 5) {
-                    wordInput += event.key;
+                    wordInput += key;
                 }
             }
 
@@ -269,10 +298,27 @@
                 }
             } else {
                 //if lost the game
+                gameState = "lost";
                 playState.style.color = "red";
-                playState.textContent = `The word was ${selectedWord}. You trash asf. Better luck next time I guess.`
+                playState.textContent = `The word was ${selectedWord}. You trash asf. Better luck next time I guess`;
+
+                buttons.forEach((button, i) => {
+                    button.removeEventListener("click", handlers[i], false);
+                });
+
+                keyEventHandlers.forEach((_, i) => {
+                    window.removeEventListener("keydown", keyEventHandlers[i], false);
+                });
             }
-        });
+        }
+
+        const handleClick = () => keyPressed(event.key);
+        window.addEventListener("keydown", handleClick);
+        keyEventHandlers.push(handleClick);
+
+        //window.addEventListener("keydown", async function (event) {
+        //    await keyPressed(event.key);
+        //});
     </script>
 </body>
 
