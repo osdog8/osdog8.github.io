@@ -12,6 +12,9 @@
             width: 60px;
             height: 60px;
             background: rgb(120, 120, 120);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     </style>
 </head>
@@ -106,6 +109,11 @@
             const box = document.createElement("div");
             box.classList.add("box");
             boxContainer.appendChild(box);
+
+            const h1 = document.createElement("h1");
+            //h1.textContent = "";
+            h1.style.color = "white";
+            box.appendChild(h1);
         }
 
         var validWordList;
@@ -156,9 +164,16 @@
             console.log(wordInput);
             console.log(wordInput.length);
             
-            for (let i = attempt * 5; i < (attempt * 5) + 5; i++) {
-                console.log(boxContainer.children[i]);
-                boxContainer.children[i].style.background = "blue";
+            if (attempt < 6) {
+                for (let i = attempt * 5; i < (attempt * 5) + 5; i++) {
+                    const currentLetter = wordInput[i - (attempt * 5)]
+                    
+                    if (currentLetter) {
+                        boxContainer.children[i].children[0].textContent = currentLetter.toUpperCase();
+                    } else {
+                        boxContainer.children[i].children[0].textContent = "";
+                    }
+                }
             }
         });
     </script>
