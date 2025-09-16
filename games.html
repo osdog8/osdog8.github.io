@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8" />
     <title>osite</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 
@@ -16,8 +17,15 @@
             justify-content: center;
             align-items: center;
         }
+
+        .rowButton {
+            height: 40px;
+            width: 30px;
+            margin-right: 5px;
+        }
     </style>
 </head>
+
 <body>
     <!--Title-->
     <h1 style="margin: 0px;">GAMES</h1>
@@ -31,12 +39,17 @@
 
         <p id="gameState" style="text-align: center;">Good luck.</p>
 
-        <div id="boxContainer" style="display: grid; grid-template-columns: repeat(5, 60px); grid-template-rows: repeat(6, 60px); gap: 5px; margin-bottom: 20px; justify-content: center;"></div>
+        <div id="boxContainer"
+            style="display: grid; grid-template-columns: repeat(5, 60px); grid-template-rows: repeat(6, 60px); gap: 5px; margin-bottom: 20px; justify-content: center;">
+        </div>
 
         <div id="keyboardLayout">
-            <div id="layoutRow1" style="margin-bottom: 5px; align-items: center; justify-content: center; display: flex;"></div>
-            <div id="layoutRow2" style="margin-bottom: 5px; align-items: center; justify-content: center; display: flex;"></div>
-            <div id="layoutRow3" style="margin-bottom: 5px; align-items: center; justify-content: center; display: flex;"></div>
+            <div id="layoutRow1"
+                style="margin-bottom: 5px; align-items: center; justify-content: center; display: flex;"></div>
+            <div id="layoutRow2"
+                style="margin-bottom: 5px; align-items: center; justify-content: center; display: flex;"></div>
+            <div id="layoutRow3"
+                style="margin-bottom: 5px; align-items: center; justify-content: center; display: flex;"></div>
         </div>
 
         <button id="prevButton" style="margin-right: 10px;">&lt; Prev</button>
@@ -122,7 +135,7 @@
             box.appendChild(h1);
         }
 
-        const charsAllowed = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", "f", "g", "h", "j", "k", "l", "z", "x", "c", "v", "b", "n", "m"];
+        const charsAllowed = ["enter", "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "backspace", "a", "s", "d", "f", "g", "h", "j", "k", "l", "z", "x", "c", "v", "b", "n", "m"];
 
         var buttons = [];
         const row1 = document.getElementById("layoutRow1")
@@ -131,22 +144,46 @@
 
         function createButton(i, row) {
             var newButton = document.createElement("button");
-            newButton.style.height = "40px";
-            newButton.style.width = "30px";
-            newButton.textContent = charsAllowed[i].toUpperCase();
-            newButton.style.marginRight = "5px";
+            newButton.classList.add("rowButton");
+            if (charsAllowed[i] == "enter") {
+                var newImg = document.createElement("img");
+                newImg.src = "enter.png";
+                newImg.style.height = "20px";
+                newImg.style.width = "20px";
+                newButton.appendChild(newImg);
+
+                newButton.style.display = "flex";
+                newButton.style.justifyContent = "center";
+                newButton.style.alignItems = "center";
+            } else if (charsAllowed[i] == "backspace") {
+                var newImg = document.createElement("img");
+                newImg.src = "backspace.png";
+                newImg.style.height = "20px";
+                newImg.style.width = "20px";
+                newButton.appendChild(newImg);
+
+                newButton.style.display = "flex";
+                newButton.style.justifyContent = "center";
+                ewButton.style.alignItems = "center";
+            } else {
+                newButton.textContent = charsAllowed[i].toUpperCase();
+            }
             row.appendChild(newButton);
 
             buttons.push(newButton);
+
+            newButton.addEventListener("click", () => {
+                console.log(charsAllowed[i]);
+            });
         }
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 12; i++) {
             createButton(i, row1);
         }
-        for (let i = 10; i < 19; i++) {
+        for (let i = 12; i < 21; i++) {
             createButton(i, row2);
         }
-        for (let i = 19; i < 26; i++) {
+        for (let i = 21; i < 28; i++) {
             createButton(i, row3);
         }
 
@@ -170,7 +207,7 @@
 
         var wordInput = "";
         var attempt = 0
-        window.addEventListener("keydown", async function(event) {
+        window.addEventListener("keydown", async function (event) {
             if (event.key == "Backspace") {
                 if (wordInput.length > 0) {
                     wordInput = wordInput.slice(0, -1)
@@ -179,19 +216,23 @@
                 if (wordInput.length == 5) {
                     const isValid = await isWordValid(wordInput);
                     if (isValid) {
+                        var lettersYellow = [];
+
+                        //change colors on grid green and yellow
                         for (let i = attempt * 5; i < (attempt * 5) + 5; i++) {
                             const currentLetter = wordInput[i - (attempt * 5)]
                             const currentLetterCorrectWord = selectedWord[i - (attempt * 5)]
+
                             if (currentLetter == currentLetterCorrectWord) {
                                 //if letter is correct (green)
                                 boxContainer.children[i].style.background = "#00cc00";
-                            } else if (selectedWord.includes(currentLetter)) {
+                            } else if (selectedWord.includes(currentLetter) && lettersYellow.includes(currentLetter) == false) {
                                 //if letter is somewhere in word (yellow)
                                 boxContainer.children[i].style.background = "#cccc00";
+                                lettersYellow.push(currentLetter)
                             }
                         }
 
-                        //charsAllowed, buttons,  word input
                         wordInput.split("").forEach((letter, i) => {
                             const index = charsAllowed.indexOf(letter)
 
@@ -199,7 +240,6 @@
                                 if (letter == selectedWord[i]) {
                                     buttons[index].style.backgroundColor = "#00ff00";
                                 } else if (selectedWord.includes(letter) && buttons[index].style.backgroundColor != "rgb(0, 255, 0)") {
-                                    console.log(buttons[index].style.backgroundColor);
                                     buttons[index].style.backgroundColor = "#ffff00";
                                 } else if (buttons[index].style.backgroundColor != "rgb(0, 255, 0)" && buttons[index].style.backgroundColor != "rgb(255, 255, 0)") {
                                     buttons[index].style.backgroundColor = "#aaaaaa";
@@ -216,11 +256,11 @@
                     wordInput += event.key;
                 }
             }
-            
+
             if (attempt < 6) {
                 for (let i = attempt * 5; i < (attempt * 5) + 5; i++) {
                     const currentLetter = wordInput[i - (attempt * 5)]
-                    
+
                     if (currentLetter) {
                         boxContainer.children[i].children[0].textContent = currentLetter.toUpperCase();
                     } else {
@@ -235,4 +275,5 @@
         });
     </script>
 </body>
+
 </html>
