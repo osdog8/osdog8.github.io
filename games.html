@@ -17,50 +17,65 @@
     <fieldset>
         <legend>Wordle</legend>
 
-        <button id="get">get random word</button>
         <p id="word"></p>
 
         <script>
             const wordP = document.getElementById("word");
 
+            const today = new Date();
+            const seed = (today.getUTCFullYear() * 10000) + ((today.getUTCMonth() + 1) * 100) + today.getUTCDate();
+
             function seededRandom(seed) {
-                // Simple LCG (Linear Congruential Generator)
-                let value = seed;
-                return function() {
-                    value = (value * 1664525 + 1013904223) % 4294967296;
-                    return value / 4294967296;
-                }
+                return ((seed * 1664525 + 1013904223) % 4294967296) / 4294967296
             }
 
-            const rand = seededRandom(12345);
-            console.log(rand());
-            console.log(rand());
-            console.log(rand());
+            const rand = seededRandom(seed); //0 <= x < 1 based on the day
+            const amount = 1385; //amount of words in text file
+            const wordIndex = Math.floor(rand * (amount - 1));
 
-
-            async function fetchRandomWord() {
+            async function fetchWord() {
                 try {
                     const response = await fetch('words.txt');
                     if (!response.ok) throw new Error("HTTP error " + response.status);
 
                     const text = await response.text();
-
-                    const words = text.split("\n").map(w => w.trim()) //turns into list then trims spaces from all words
-
-                    wordP.textContent = words[Math.floor(Math.random() * words.length)];
+                    const word = text.split("\n").map(w => w.trim())[wordIndex] //turns into list then trims spaces from all words
+                    wordP.textContent = word
                 } catch (error) {
                     console.error('Error fetching the word list:', error);
                     wordP.textContent = "failed to load word list";
                 }
             }
-            
-            const get = document.getElementById("get");
-            get.addEventListener("click", () => {
-                fetchRandomWord();
-            });
 
-            fetchRandomWord();
+            fetchWord();
+
+
+
+
+            function updateCountdown() {
+                const exactlyNow = new Date();
+
+                const nextUTC = new Date(Date.UTC(
+                    exactlyNow.getUTCFullYear(),
+                    exactlyNow.getUTCMonth(),
+                    exactlyNow.getUTCDate() + 1, //+1 cuz that's tomorrow
+                    0, 0, 0
+                ));
+
+                const diffMs = nextUTC - exactlyNow; //difference of days in milliseconds
+
+                const hours = Math.floor(diffMs / 1000 / 60 / 60);
+                const minutes = Math.floor((diffMs / 1000 / 60) % 60);
+                const seconds = Math.floor((diffMs / 1000) % 60);
+                
+                document.getElementById("countdown").textContent = `Next word in ${hours}h ${minutes}m ${seconds}s`;
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
         </script>
     </fieldset>
+
+    <p id="countdown"></p>
 </body>
 </html>
