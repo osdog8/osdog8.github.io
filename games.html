@@ -14,68 +14,79 @@
         <a href="index.html">Main Page</a> | <a href="calcs.html">Calculators</a> | <a href="games.html">Games</a>
     </nav>
 
+    <!--Game Selection-->
     <fieldset>
-        <legend>Wordle</legend>
+        <legend id="wordleCount">Wordle</legend>
 
         <p id="word"></p>
-
-        <script>
-            const wordP = document.getElementById("word");
-
-            const today = new Date();
-            const seed = (today.getUTCFullYear() * 10000) + ((today.getUTCMonth() + 1) * 100) + today.getUTCDate();
-
-            function seededRandom(seed) {
-                return ((seed * 1664525 + 1013904223) % 4294967296) / 4294967296
-            }
-
-            const rand = seededRandom(seed); //0 <= x < 1 based on the day
-            const amount = 1385; //amount of words in text file
-            const wordIndex = Math.floor(rand * (amount - 1));
-
-            async function fetchWord() {
-                try {
-                    const response = await fetch('words.txt');
-                    if (!response.ok) throw new Error("HTTP error " + response.status);
-
-                    const text = await response.text();
-                    const word = text.split("\n").map(w => w.trim())[wordIndex] //turns into list then trims spaces from all words
-                    wordP.textContent = word
-                } catch (error) {
-                    console.error('Error fetching the word list:', error);
-                    wordP.textContent = "failed to load word list";
-                }
-            }
-
-            fetchWord();
-
-
-
-
-            function updateCountdown() {
-                const exactlyNow = new Date();
-
-                const nextUTC = new Date(Date.UTC(
-                    exactlyNow.getUTCFullYear(),
-                    exactlyNow.getUTCMonth(),
-                    exactlyNow.getUTCDate() + 1, //+1 cuz that's tomorrow
-                    0, 0, 0
-                ));
-
-                const diffMs = nextUTC - exactlyNow; //difference of days in milliseconds
-
-                const hours = Math.floor(diffMs / 1000 / 60 / 60);
-                const minutes = Math.floor((diffMs / 1000 / 60) % 60);
-                const seconds = Math.floor((diffMs / 1000) % 60);
-                
-                document.getElementById("countdown").textContent = `Next word in ${hours}h ${minutes}m ${seconds}s`;
-            }
-
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
-        </script>
     </fieldset>
 
     <p id="countdown"></p>
+
+
+    <!--Game Handler Script-->
+    <script>
+        const wordP = document.getElementById("word");
+
+        const today = new Date();
+        const seed = (today.getUTCFullYear() * 10000) + ((today.getUTCMonth() + 1) * 100) + today.getUTCDate();
+
+        function seededRandom(seed) {
+            return ((seed * 1664525 + 1013904223) % 4294967296) / 4294967296
+        }
+
+        const rand = seededRandom(seed); //0 <= x < 1 based on the day
+        const amount = 1385; //amount of words in text file
+        const wordIndex = Math.floor(rand * (amount - 1));
+
+        async function fetchWord() {
+            try {
+                const response = await fetch('words.txt');
+                if (!response.ok) throw new Error("HTTP error " + response.status);
+
+                const text = await response.text();
+                const word = text.split("\n").map(w => w.trim())[wordIndex] //turns into list then trims spaces from all words
+                wordP.textContent = word
+            } catch (error) {
+                console.error('Error fetching the word list:', error);
+                wordP.textContent = "failed to load word list";
+            }
+        }
+
+        fetchWord();
+
+
+
+        
+
+        function updateCountdown() {
+            const exactlyNow = new Date();
+
+            const nextUTC = new Date(Date.UTC(
+                exactlyNow.getUTCFullYear(),
+                exactlyNow.getUTCMonth(),
+                exactlyNow.getUTCDate() + 1, //+1 cuz that's tomorrow
+                0, 0, 0
+            ));
+
+            const diffMs = nextUTC - exactlyNow; //difference of days in milliseconds
+
+            const hours = Math.floor(diffMs / 1000 / 60 / 60);
+            const minutes = Math.floor((diffMs / 1000 / 60) % 60);
+            const seconds = Math.floor((diffMs / 1000) % 60);
+
+            document.getElementById("countdown").textContent = `Next word in ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        const wordleCount = document.getElementById("wordleCount");
+        const started = new Date(Date.UTC(2025, 8, 15)).getTime(); //september 15, 2025 (milliseconds since the first wordle)
+
+        const daysSince = Math.floor((new Date().getTime() - started) / (1000 * 60 * 60 * 24));
+
+        wordleCount.textContent = `Wordle #${daysSince}`;
+    </script>
 </body>
 </html>
