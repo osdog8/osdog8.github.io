@@ -111,7 +111,7 @@
         var validWordList;
         async function isWordValid(wordString) {
             if (validWordList) {
-                return validWordList.includes(wordString);
+                return await validWordList.includes(wordString);
             } else {
                 try {
                     const response = await fetch('validWordsToEnter.txt');
@@ -119,7 +119,7 @@
 
                     const text = await response.text();
                     validWordList = text.split("\n").map(w => w.trim());
-                    await validWordList.includes(wordString);
+                    return await validWordList.includes(wordString);
                 } catch (error) {
                     console.error('Error fetching the valid words to enter list:', error);
                 }
@@ -133,23 +133,32 @@
             if (event.key == "Backspace") {
                 if (wordInput.length > 0) {
                     wordInput = wordInput.slice(0, -1)
+                    console.log(wordInput);
+                    console.log(wordInput.length);
                 }
             } else if (event.key == "Enter") {
-                if (wordInput.length == 5 && await isWordValid(wordInput)) {
-                    console.log("word found");
-                    wordInput = "";
-                    attempt++;
+                if (wordInput.length == 5) {
+                    const f = await isWordValid(wordInput);
+                    if (f) {
+                        console.log("word found");
+                        wordInput = "";
+                        attempt++;
+                        console.log("attemp:");
+                        console.log(attempt);
+                    }
                 }
             } else if (charsAllowed.includes(event.key)) {
-                console.log(wordInput.length);
                 if (wordInput.length < 5) {
                     wordInput += event.key;
-                    console.log(wordInput);
                 }
             }
+
+            console.log(wordInput);
+            console.log(wordInput.length);
             
-            for (let i = 0; i < wordInput.length; i++) {
-                
+            for (let i = attempt * 5; i < (attempt * 5) + 5; i++) {
+                console.log(boxContainer.children[i]);
+                boxContainer.children[i].style.background = "blue";
             }
         });
     </script>
