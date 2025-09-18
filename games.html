@@ -318,7 +318,7 @@
                                 window.removeEventListener("keydown", keyEventHandlers[i], false);
                             });
 
-                            const nextStreak = getCookie("streak") + 1
+                            const nextStreak = Number(getCookie("streak")) + 1
                             setCookie("streak", nextStreak, 2920);
                             userStreak.textContent = `Current streak: ${nextStreak}`;
                         }
