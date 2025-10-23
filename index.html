@@ -1,24 +1,92 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8" />
     <title>osite</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
 </head>
+
 <body>
     <!--Title-->
-    <h1 style="margin: 0px;">WELCOME TO MY CHOPPED WEBSITE</h1>
+    <h1 style="margin: 0px;">welcome to my website i</h1>
     <nav style="margin-bottom: 20px;">
         <a href="index.html">Main Page</a> | <a href="calcs.html">Calculators</a> | <a href="games.html">Games</a>
     </nav>
-    <p id="currentTime"></p>
+    <!--<p id="currentTime"></p>-->
+    <h3>daily derivitive (day 1):</h3>
+    <h2 id="equation"></h2>
 
     <script>
-        const currentTime = document.getElementById("currentTime");
-        currentTime.textContent = new Date().toLocaleString();
-        //new Date().getTime()
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+        function randomConstant() {
+            while (true) {
+                if (Math.random() > 0.5) {
+                    var n = getRandomInt(-20, 25);
+                    if (n != 0 && n != 1) {
+                        return n;
+                    }
+                } else {
+                    return special[getRandomInt(0, special.length)]
+                }
+            }
+        }
+
+        var eq = "";
+
+        //p can be funcs or constants, r is only for translating operators
+        //sqrt[n] chooses a random number for n
+        const funcs = ["root", "\\sin({phrase})", "\\cos({phrase})", "\\tan({phrase})", "\\frac{phrase}{phrase}", "\\ln({phrase})"]
+        const operators = ["+phrase", "-phrase", "*phrase", "^{phrase}", "e^{phrase}"]
+        const special = ["\\pi", "e"];
+
+        //a "phrase" is anything in the tables.
+        function replace(phrase, array) {
+            var newPhrase = array[getRandomInt(0, array.length)]
+
+            if (array == "constant") {
+                const pIndex = phrase.indexOf("phrase");
+
+                return phrase.slice(0, pIndex) + randomConstant() + phrase.slice(pIndex + 6);
+            } else if (array == funcs) {
+                const pIndex = phrase.indexOf("phrase");
+
+                if (newPhrase == "root") {
+                    var root = getRandomInt(1, 8);
+                    newPhrase = "\\sqrt[" + getRandomInt(1, 8) + "]{phrase}";
+                }
+
+                return phrase.slice(0, pIndex) + newPhrase + replace(newPhrase, operators) + phrase.slice(pIndex + 6);
+            } else if (array == operators) {
+                return phrase + newPhrase;
+            }
+        }
+
+        function parse(phrase, depth) {
+            if (!phrase.includes("phrase")) return phrase;
+
+            if (depth < 1) {
+                phrase = replace(phrase, funcs);
+            } else {
+                phrase = replace(phrase, "constant");
+            }
+
+            console.log(phrase);
+            return parse(phrase, depth + 1);
+        }
+
+        eq = funcs[getRandomInt(0, funcs.length)] + operators[getRandomInt(0, operators.length)];
+
+        document.getElementById("equation").innerHTML = "\\(\\frac{d}{dx}" + parse(eq, 0) + "\\)";
+        MathJax.typeset();
     </script>
 </body>
+
 </html>
