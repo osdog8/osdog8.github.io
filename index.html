@@ -43,28 +43,36 @@
 
         //p can be funcs or constants, r is only for translating operators
         //sqrt[n] chooses a random number for n
-        const funcs = ["root", "\\sin({phrase})", "\\cos({phrase})", "\\tan({phrase})", "\\frac{phrase}{phrase}", "\\ln({phrase})"]
-        const operators = ["+phrase", "-phrase", "*phrase", "^{phrase}", "e^{phrase}"]
+        const funcs = ["root", "\\sin({phrase})", "\\cos({phrase})", "\\tan({phrase})", "{\\frac{phrase}{phrase}}", "\\ln({phrase})"]
+        const operators = ["+{phrase}", "-{(phrase)}", "*{phrase}", "^{phrase}", "e^{phrase}"]
         const special = ["\\pi", "e"];
 
         //a "phrase" is anything in the tables.
         function replace(phrase, array) {
-            var newPhrase = array[getRandomInt(0, array.length)]
+            if (array === "x") {
+                const pIndex = phrase.indexOf("phrase");
+                return phrase.slice(0, pIndex) + "{x}" + phrase.slice(pIndex + 6);
+            }
 
-            if (array == "constant") {
+            //var newPhrase = array[getRandomInt(0, array.length)]
+
+            if (array === "constant") {
                 const pIndex = phrase.indexOf("phrase");
 
                 return phrase.slice(0, pIndex) + randomConstant() + phrase.slice(pIndex + 6);
             } else if (array == funcs) {
-                const pIndex = phrase.indexOf("phrase");
+                var newPhrase = funcs[getRandomInt(0, funcs.length)]
 
-                if (newPhrase == "root") {
-                    var root = getRandomInt(1, 8);
-                    newPhrase = "\\sqrt[" + getRandomInt(1, 8) + "]{phrase}";
+                if (newPhrase === "root") {
+                    newPhrase = "\\sqrt[" + getRandomInt(2, 5) + "]{phrase}";
+                    const pIndex = phrase.indexOf("phrase");
+                    return phrase.slice(0, pIndex) + newPhrase + phrase.slice(pIndex + 6);
                 }
 
+                const pIndex = phrase.indexOf("phrase");
                 return phrase.slice(0, pIndex) + newPhrase + replace(newPhrase, operators) + phrase.slice(pIndex + 6);
             } else if (array == operators) {
+                var newPhrase = operators[getRandomInt(0, operators.length)]
                 return phrase + newPhrase;
             }
         }
@@ -76,13 +84,14 @@
                 phrase = replace(phrase, funcs);
             } else {
                 phrase = replace(phrase, "constant");
+                phrase = replace(phrase, "x");
             }
 
             console.log(phrase);
             return parse(phrase, depth + 1);
         }
 
-        eq = funcs[getRandomInt(0, funcs.length)] + operators[getRandomInt(0, operators.length)];
+        eq = funcs[getRandomInt(1, funcs.length)] + operators[getRandomInt(0, operators.length)];
 
         document.getElementById("equation").innerHTML = "\\(\\frac{d}{dx}" + parse(eq, 0) + "\\)";
         MathJax.typeset();
