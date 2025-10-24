@@ -90,12 +90,23 @@
         */
 
         //imma call these phrases ok
-        const functions = { "sqrt": "\\sqrt[abc]{xyz}", "sine": "\\sin(abc)", "cosine": "\\cos(abc)" };
-        const operators = ["abc+xyz", "abc-xyz", "abcxyz", "\\frac{abc}{xyz}", "{abc}^{xyz}"];
+        const functions = {
+            "sqrt": "\\sqrt[abc]{xyz}",
+            "sine": "\\sin(abc)",
+            "cosine": "\\cos(abc)",
+        };
+        const operators = [
+            "abc+xyz",
+            "abc-xyz",
+            "abc*xyz",
+            "\\frac{abc}{xyz}",
+            "{abc}^{xyz}"
+        ];
         const constants = ["\\pi", "e"];
 
-        function getRandom(array) {
-            return "{" + array[getRandomInt(0, array.length)] + "}";
+        function getRandom(dict) {
+            const values = Object.values(dict);
+            return "{" + values[getRandomInt(0, values.length)] + "}";
         }
 
         /*
@@ -112,11 +123,11 @@
 
         var equation = [];
 
-        for (var i = 0; i < 4; i++) equation.push(getRandom(functions), getRandom(operators));
+        for (var i = 0; i < 2; i++) equation.push(getRandom(functions), getRandom(operators));
         equation.push(getRandom(functions));
 
         var equationString = "";
-        equation.forEach(key, phrase => equationString += phrase);
+        equation.forEach(phrase => equationString += phrase);
 
         document.getElementById("equation").innerHTML = "\\(\\frac{d}{dx}" + equationString + "\\)";
         MathJax.typeset();
