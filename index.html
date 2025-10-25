@@ -89,12 +89,13 @@
 
         */
 
+        
         //imma call these phrases ok
-        const functions = {
-            "sqrt": "\\sqrt[abc]{xyz}",
-            "sine": "\\sin(abc)",
-            "cosine": "\\cos(abc)",
-        };
+        const functions = [
+            "\\sqrt{abc}",
+            "\\sin(abc)",
+            "\\cos(abc)"
+        ];
         const operators = [
             "abc+xyz",
             "abc-xyz",
@@ -109,28 +110,61 @@
             return "{" + values[getRandomInt(0, values.length)] + "}";
         }
 
-        /*
-        function getConstant(outerFunction) {
-            if (outerFunction == "sqrt") {
-                return
-            }
+        //first layer of arrays goes to operators only.
+        //first layer: [operator[abc]] (functions or constants in abc)
+        //next array in first layer goes into the xyz of the last.
+        
+        //[
+        //    [operator[abc][xyz], [abc's function or constant]],
+        //    [operator[abc][xyz], [abc's function or constant]],
+        //    [xyz of last function (pick a functon or constant)]
+        //]
+        
+        
+        var equation = [
+            ["abc+xyz", "2"],
+            ["abc+xyz", ["\\sqrt{abc}", ["\\sin(abc)", "x"]]],
+            ["\\frac{abc}{xyz}", ["\\cos(abc)", "x"]],
+            ["{abc}^{xyz}", ["\\cos(abc)", "x"]],
+            ["\\frac{abc}{xyz}", "x"],
+            ["\\sin(abc)", "x"]
+        ];
+
+
+        //Array.isArray(variable)
+
+        //var equationString = "";
+        
+        function go(array) {
+            array.forEach(phraseArray => {
+                var result = "";
+                if (Array.isArray(phraseArray[1])) {
+                    go(phraseArray[1]);
+                } else {
+                    var newString = phraseArray[0];
+                    console.log("------------")
+                    console.log(typeof phraseArray)
+                    console.log(phraseArray)
+                    console.log(phraseArray[0])
+                    console.log(phraseArray[1])
+                    //console.log(newString);
+                    newString = newString.replace("abc", phraseArray[1]);
+                    console.log(newString)
+                    equationString += newString;
+                }
+            });
         }
-        */
 
-        function parse() {
 
-        }
+const equationString = go(equation);
+console.log(equationString);
 
-        var equation = [];
+// → 2+\sqrt{\sin(x)}+\frac{\cos(x)}{{\cos(x)}^{\frac{x}{\sin(x)}}}
 
-        for (var i = 0; i < 2; i++) equation.push(getRandom(functions), getRandom(operators));
-        equation.push(getRandom(functions));
 
-        var equationString = "";
-        equation.forEach(phrase => equationString += phrase);
 
         document.getElementById("equation").innerHTML = "\\(\\frac{d}{dx}" + equationString + "\\)";
-        MathJax.typeset();
+        MathJax.typesetPromise();
     </script>
 </body>
 
