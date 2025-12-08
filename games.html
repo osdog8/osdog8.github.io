@@ -348,7 +348,7 @@
                 //if lost the game
                 gameState = "lost";
                 playState.style.color = "red";
-                playState.textContent = `The word was ${selectedWord}. You trash asf. Better luck next time I guess`;
+                playState.textContent = `The word was ${selectedWord}. Better luck next time I guess.`;
 
                 buttons.forEach((button, i) => {
                     button.removeEventListener("click", handlers[i], false);

@@ -11,20 +11,83 @@
 
 <body>
     <!--Title-->
-    <h1 style="margin: 0px;">welcome to my website i</h1>
+    <h1 style="margin: 0px;">the webtiete</h1>
     <nav style="margin-bottom: 20px;">
         <a href="index.html">Main Page</a> | <a href="calcs.html">Calculators</a> | <a href="games.html">Games</a>
     </nav>
-    <!--<p id="currentTime"></p>-->
+    <!--<p id="currentTime"></p>
     <h3>daily derivitive (day 1):</h3>
     <h2 id="equation"></h2>
+    -->
+
+    <canvas id="piCanvas" width="600" height="300" style="border:3px solid white; background-color: #141414;"></canvas>
+
+
+    <button id="start">start simulation</button>
+    <input id="massSlider" type="range" min="0" max="12" step="1" value="1"> <!--define min and max of the mass slider-->
+
 
     <script>
+
+        const massSlider = document.getElementById("massSlider")
+
+        const canvas = document.getElementById("piCanvas")
+        const ctx = canvas.getContext("2d")
+
+        var massHeavyBlock = Math.pow(10, massSlider.value)
+        var massLightBlock = 1
+        var sizeHeavyBlock = 50 + (Number(massSlider.value) - 0) / (12 - 0) * (150 - 50) 
+        var sizeLightBlock = 50
+
+        var posLightBlock = 150
+        var posHeavyBlock = 400
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+            ctx.fillStyle = "blue" //the heavy one
+            ctx.fillRect(posHeavyBlock, 250 - (sizeHeavyBlock), sizeHeavyBlock, sizeHeavyBlock)
+            ctx.fillStyle = "orange" //the bumper that makes pi
+            ctx.fillRect(posLightBlock, 250 - (sizeLightBlock), sizeLightBlock, sizeLightBlock)
+
+            ctx.strokeStyle = "white"
+            ctx.lineWidth = 3
+
+            ctx.beginPath() //draw white horizontal line
+            ctx.moveTo(50, 250)
+            ctx.lineTo(600, 250)
+            ctx.stroke()
+
+            ctx.beginPath() //draw white vertical line
+            ctx.moveTo(50, 0)
+            ctx.lineTo(50, 250)
+            ctx.stroke()
+
+            requestAnimationFrame(draw)
+        }
+
+        draw()
+
+
+        const startButton = document.getElementById("start")
+
+        startButton.addEventListener("click", () => {
+            console.log(Math.floor(Math.PI * Math.pow(10, (Math.log10(massHeavyBlock) / 2))))
+        })
+
+        massSlider.addEventListener("input", () => {
+            massHeavyBlock = Math.pow(10, Number(massSlider.value));
+            sizeHeavyBlock = 50 + (Number(massSlider.value) - 0) / (12 - 0) * (150 - 50)  //block scales linearly
+        })
+
+
+        /*
         function getRandomInt(min, max) {
             min = Math.ceil(min);
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min)) + min;
         }
+            */
 
         /*
         
@@ -89,7 +152,7 @@
 
         */
 
-        
+        /*
         //imma call these phrases ok
         const functions = [
             "\\sqrt{abc}",
@@ -109,6 +172,7 @@
             const values = Object.values(dict);
             return "{" + values[getRandomInt(0, values.length)] + "}";
         }
+            */
 
         //first layer of arrays goes to operators only.
         //first layer: [operator[abc]] (functions or constants in abc)
@@ -120,7 +184,7 @@
         //    [xyz of last function (pick a functon or constant)]
         //]
         
-        
+        /*
         var equation = [
             ["abc+xyz", "2"],
             ["abc+xyz", ["\\sqrt{abc}", ["\\sin(abc)", "x"]]],
@@ -129,12 +193,14 @@
             ["\\frac{abc}{xyz}", "x"],
             ["\\sin(abc)", "x"]
         ];
+        */
 
 
         //Array.isArray(variable)
 
         //var equationString = "";
         
+        /*
         function go(array) {
             array.forEach(phraseArray => {
                 var result = "";
@@ -154,17 +220,18 @@
                 }
             });
         }
+        */
 
 
-const equationString = go(equation);
-console.log(equationString);
+        //const equationString = go(equation);
+        //console.log(equationString);
 
 // → 2+\sqrt{\sin(x)}+\frac{\cos(x)}{{\cos(x)}^{\frac{x}{\sin(x)}}}
 
 
 
-        document.getElementById("equation").innerHTML = "\\(\\frac{d}{dx}" + equationString + "\\)";
-        MathJax.typesetPromise();
+        //document.getElementById("equation").innerHTML = "\\(\\frac{d}{dx}" + equationString + "\\)";
+        //MathJax.typesetPromise();
     </script>
 </body>
 
