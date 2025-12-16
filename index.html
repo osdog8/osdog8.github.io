@@ -24,7 +24,7 @@
 
 
     <button id="start">start simulation</button>
-    <input id="massSlider" type="range" min="0" max="12" step="1" value="1"> <!--define min and max of the mass slider-->
+    <input id="massSlider" type="range" min="0" max="6" step="2" value="0"> <!--define min and max of the mass slider-->
 
 
     <script>
@@ -36,13 +36,37 @@
 
         var massHeavyBlock = Math.pow(10, massSlider.value)
         var massLightBlock = 1
+        var velocityLightBlock = 0
         var sizeHeavyBlock = 50 + (Number(massSlider.value) - 0) / (12 - 0) * (150 - 50) 
         var sizeLightBlock = 50
-
+        var velocityHeavyBlock = 1
+        var simulationOn = false
         var posLightBlock = 150
         var posHeavyBlock = 400
+        var justTouchedWall = false
+        var hitCount = 0
 
         function draw() {
+            if(simulationOn){
+                posHeavyBlock-=velocityHeavyBlock
+                posLightBlock-=velocityLightBlock
+                if(posLightBlock+sizeLightBlock>=posHeavyBlock){
+                    vi2=velocityHeavyBlock
+                    vi1=velocityLightBlock
+                    velocityLightBlock = ((massLightBlock - massHeavyBlock) / (massLightBlock + massHeavyBlock)) * vi1 + (2 * massHeavyBlock / (massLightBlock + massHeavyBlock)) * vi2
+                    velocityHeavyBlock = (2 * massLightBlock / (massLightBlock + massHeavyBlock)) * vi1 + ((massHeavyBlock - massLightBlock) / (massLightBlock + massHeavyBlock)) * vi2
+                    justTouchedWall = false
+                    hitCount++
+                }
+                if(posLightBlock<50 && !justTouchedWall){
+                    velocityLightBlock = -velocityLightBlock
+                    justTouchedWall = true
+                    hitCount++
+                }
+                if(velocityHeavyBlock<=velocityLightBlock && velocityHeavyBlock <= 0 && velocityLightBlock <= 0){
+                    console.log("final count: " + hitCount)
+                }
+            }
             ctx.clearRect(0, 0, canvas.width, canvas.height)
 
             ctx.fillStyle = "blue" //the heavy one
@@ -63,15 +87,24 @@
             ctx.lineTo(50, 250)
             ctx.stroke()
 
+            // show collision count on screen
+            ctx.fillStyle = "white"
+            ctx.font = "20px Arial"
+            ctx.fillText("Collisions: " + hitCount, 60, 30)
+
             requestAnimationFrame(draw)
         }
 
         draw()
-
+        /*
+        v1f = ((massLightBlock - massHeavyBlock) / (massLightBlock + massHeavyBlock)) * v1i + (2 * massHeavyBlock / (massLightBlock + massHeavyBlock)) * v2i
+    v2f = (2 * massLightBlock / (massLightBlock + massHeavyBlock)) * v1i + ((massHeavyBlock - massLightBlock) / (massLightBlock + massHeavyBlock)) * v2i
+        */
 
         const startButton = document.getElementById("start")
 
         startButton.addEventListener("click", () => {
+            simulationOn = true
             console.log(Math.floor(Math.PI * Math.pow(10, (Math.log10(massHeavyBlock) / 2))))
         })
 
@@ -79,7 +112,7 @@
             massHeavyBlock = Math.pow(10, Number(massSlider.value));
             sizeHeavyBlock = 50 + (Number(massSlider.value) - 0) / (12 - 0) * (150 - 50)  //block scales linearly
         })
-
+        
 
         /*
         function getRandomInt(min, max) {
