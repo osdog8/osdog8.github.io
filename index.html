@@ -15,17 +15,14 @@
     <nav style="margin-bottom: 20px;">
         <a href="index.html">Main Page</a> | <a href="calcs.html">Calculators</a> | <a href="games.html">Games</a>
     </nav>
-    <!--<p id="currentTime"></p>
-    <h3>daily derivitive (day 1):</h3>
-    <h2 id="equation"></h2>
-    -->
 
-    <canvas id="piCanvas" width="600" height="300" style="border:3px solid white; background-color: #141414;"></canvas>
+    <canvas id="piCanvas" width="600" height="300" style="border:3px solid white; background-color: #141414; display: block; margin-bottom: 20px;"></canvas>
+
+    <p style="margin: 0; margin-bottom: 5px;">mass of blue block</p>
+    <input id="massSlider" type="range" min="0" max="6" step="2" value="0" style="display: block;">
 
 
-    <button id="start">start simulation</button>
-    <input id="massSlider" type="range" min="0" max="6" step="2" value="0"> <!--define min and max of the mass slider-->
-
+    <button id="start" style="display: block; margin-bottom: 10px; margin-top: 20px;">start simulation</button>
 
     <script>
 
@@ -47,26 +44,24 @@
         var hitCount = 0
 
         function draw() {
-            if(simulationOn){
-                posHeavyBlock-=velocityHeavyBlock
-                posLightBlock-=velocityLightBlock
-                if(posLightBlock+sizeLightBlock>=posHeavyBlock){
-                    vi2=velocityHeavyBlock
-                    vi1=velocityLightBlock
-                    velocityLightBlock = ((massLightBlock - massHeavyBlock) / (massLightBlock + massHeavyBlock)) * vi1 + (2 * massHeavyBlock / (massLightBlock + massHeavyBlock)) * vi2
-                    velocityHeavyBlock = (2 * massLightBlock / (massLightBlock + massHeavyBlock)) * vi1 + ((massHeavyBlock - massLightBlock) / (massLightBlock + massHeavyBlock)) * vi2
-                    justTouchedWall = false
-                    hitCount++
-                }
-                if(posLightBlock<50 && !justTouchedWall){
-                    velocityLightBlock = -velocityLightBlock
-                    justTouchedWall = true
-                    hitCount++
-                }
-                if(velocityHeavyBlock<=velocityLightBlock && velocityHeavyBlock <= 0 && velocityLightBlock <= 0){
-                    console.log("final count: " + hitCount)
-                }
+            if (simulationOn) {
+                    posHeavyBlock -= velocityHeavyBlock
+                    posLightBlock -= velocityLightBlock
+                    if (posLightBlock + sizeLightBlock >= posHeavyBlock) {
+                        vi2 = velocityHeavyBlock
+                        vi1 = velocityLightBlock
+                        velocityLightBlock = ((massLightBlock - massHeavyBlock) / (massLightBlock + massHeavyBlock)) * vi1 + (2 * massHeavyBlock / (massLightBlock + massHeavyBlock)) * vi2
+                        velocityHeavyBlock = (2 * massLightBlock / (massLightBlock + massHeavyBlock)) * vi1 + ((massHeavyBlock - massLightBlock) / (massLightBlock + massHeavyBlock)) * vi2
+                        justTouchedWall = false
+                        hitCount++
+                    }
+                    if(posLightBlock < 50 && !justTouchedWall){
+                        velocityLightBlock = -velocityLightBlock
+                        justTouchedWall = true
+                        hitCount++
+                    }
             }
+               
             ctx.clearRect(0, 0, canvas.width, canvas.height)
 
             ctx.fillStyle = "blue" //the heavy one
@@ -94,8 +89,13 @@
 
             // show mass of blue on screen
             ctx.fillStyle = "white"
-            ctx.font = "18px Arial"
-            ctx.fillText(massHeavyBlock + "kg", 200, (sizeHeavyBlock / 2) + 250)
+            ctx.font = "20px Arial"
+            ctx.fillText(massHeavyBlock + "kg", posHeavyBlock, 255 - (sizeHeavyBlock / 2))
+
+            // show mass of blue on screen
+            ctx.fillStyle = "white"
+            ctx.font = "20px Arial"
+            ctx.fillText("1kg", posLightBlock, 255 - (sizeLightBlock / 2))
 
             requestAnimationFrame(draw)
         }
@@ -109,7 +109,26 @@
         const startButton = document.getElementById("start")
 
         startButton.addEventListener("click", () => {
-            simulationOn = true
+            if (simulationOn) {
+                simulationOn = false;
+
+            massHeavyBlock = Math.pow(10, massSlider.value)
+            massLightBlock = 1
+            velocityLightBlock = 0
+            sizeHeavyBlock = 50 + (Number(massSlider.value) - 0) / (12 - 0) * (150 - 50) 
+            sizeLightBlock = 50
+            velocityHeavyBlock = 1
+            simulationOn = false
+            posLightBlock = 150
+            posHeavyBlock = 400
+            justTouchedWall = false
+            hitCount = 0
+
+                startButton.textContent = "start simulation"
+            } else {
+                simulationOn = true;
+                startButton.textContent = "reset"
+            }
             //console.log(Math.floor(Math.PI * Math.pow(10, (Math.log10(massHeavyBlock) / 2))))
         })
 
