@@ -92,6 +92,11 @@
             ctx.font = "20px Arial"
             ctx.fillText("Collisions: " + hitCount, 60, 30)
 
+            // show mass of blue on screen
+            ctx.fillStyle = "white"
+            ctx.font = "18px Arial"
+            ctx.fillText(massHeavyBlock + "kg", 200, (sizeHeavyBlock / 2) + 250)
+
             requestAnimationFrame(draw)
         }
 
@@ -105,7 +110,7 @@
 
         startButton.addEventListener("click", () => {
             simulationOn = true
-            console.log(Math.floor(Math.PI * Math.pow(10, (Math.log10(massHeavyBlock) / 2))))
+            //console.log(Math.floor(Math.PI * Math.pow(10, (Math.log10(massHeavyBlock) / 2))))
         })
 
         massSlider.addEventListener("input", () => {
